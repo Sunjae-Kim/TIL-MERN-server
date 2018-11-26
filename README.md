@@ -161,7 +161,22 @@
   )
   ```
 
----
+- `callbackURL` 파트에 추가해준 url주소로 google에서 만든 웹어플리케이션의 승인된 리디렉션 주소를 설정해준다. `http://localhost:5000/auth/google/callback`
+
+- Passport로 google 로그인 process
+
+  아래 Code를 확인하고 사용자 정보를 넘기는 단계까지 Passport에서 지원해준다.
+
+  |    Browser     |      |               Express                |      |           Google            |
+  | :------------: | :--: | :----------------------------------: | :--: | :-------------------------: |
+  | `/auth/google` |  ▶   |          req => google 토스          |  ▶   |    사용자 허락 창을 띄움    |
+  |                |      |             code를 받음              |  ◀   | 사용자 허가 함, code를 넘김 |
+  |                |      | code를 포함한 요청을 Google에게 보냄 |  ▶   |         Code를 확인         |
+  |                |      |           DB에 레코드 저장           |  ◀   |     사용자 정보를 넘김      |
+  | Logged IN !!!  |  ◀   |   사용자 ID를 브라우저 쿠키에 저장   |      |                             |
+  |  API req 보냄  |  ▶   | 쿠키를 확인해서 로그인한 사용자 확인 |      |                             |
+
+
 
 
 
