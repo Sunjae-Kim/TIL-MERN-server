@@ -1,5 +1,5 @@
 const passport = require('passport');
-const router = require('express').Router;
+const router = require('express').Router();
 
 // just toss
 router.get(

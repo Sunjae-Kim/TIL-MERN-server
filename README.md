@@ -44,6 +44,8 @@
   $ npm install -g heroku
   $ npm install passport passport-google-oauth20
   $ npm install config
+  $ npm install mongoose
+  $ npm install cookie-session
   ```
 
 ---
@@ -165,7 +167,7 @@
 
 - Passport로 google 로그인 process
 
-  아래 Code를 확인하고 사용자 정보를 넘기는 단계까지 Passport에서 지원해준다.
+  아래 **Code를 확인하고 사용자 정보를 Express로 넘기는 단계**까지 **Passport**에서 지원해준다.
 
   |    Browser     |      |               Express                |      |           Google            |
   | :------------: | :--: | :----------------------------------: | :--: | :-------------------------: |
@@ -176,13 +178,109 @@
   | Logged IN !!!  |  ◀   |   사용자 ID를 브라우저 쿠키에 저장   |      |                             |
   |  API req 보냄  |  ▶   | 쿠키를 확인해서 로그인한 사용자 확인 |      |                             |
 
+---
+
+### 1.6 Refactoring
+
+- **services/passport.js**
+
+  ```bash
+  $ mkdir services
+  $ touch services/passport.js
+  ```
+
+  index.js 내부에 있던 Passport 관련 내용들을 전부 옮기도록 하자. 
+
+  ```js
+  const passport = require('passport');
+  const GoogleStrategy = require('passport-google-oauth20').Strategy;
+  const config = require('config');
+  
+  passport.use(new GoogleStrategy(
+    {
+      clientID: config.auth.google.clientID,
+      clientSecret: config.auth.google.clientSecret,
+      callbackURL: "/auth/google/callback"
+    },
+    /*
+      refreshToken: 언제 expire 시킬지  
+    */
+    (accessToken, refreshToken, profile, done) => {
+      console.log(`accessToken => ${accessToken}`);
+      console.log(`refreshToken => ${refreshToken}`);
+      console.log(profile);
+      console.log(`done => ${done}`);
+    }
+  ));
+  ```
+
+  - index.js
+
+    ```js
+    /* services */
+    require('./services/passport'); // 매번 수행됨
+    ```
+
+    **passport.js** 내부의 `passport.user()` 함수는 middleware와 같은 형식으로 호출하기 때문에 위 코드처럼 `require()` 를 통해서 일반 함수 호출 방식으로 바로 실행이 되도록 하자.
+
+- **routes**
+
+  ```bash
+  $ mkdir routes
+  $ touch auth.js
+  $ touch home.js
+  ```
+
+  index.js 내부에 HTTP method 들을 따로 routes  폴더에서 관리하자. [자세히 보기]()
+
+---
+
+## 2. MongoDB
+
+- config에 mongodb url setting
+
+- index.js에서 mongodb connect
+
+- user model을 만든다.
+
+  ```bash
+  $ mkdir models
+  $ touch User.js
+  ```
+
+  ```js
+  const mongoose = require('mongoose');
+  const { Schema } = mongoose;
+  
+  const userSchema = new Schema({
+    googleID: String,
+    required: true
+  })
+  
+  const User = mongoose.Model('user', userSchema);
+  
+  exports.User = User;
+  ```
+
+- passport에서 user 저장
+
+  **passport.js**
+
+  ```js
+    (accessToken, refreshToken, profile, done) => {
+      const user = new User({ googleID: profile.id});
+      user.save()
+        .then(newUser => done(null, newUser))
+        .catch(error => done(error, null));
+    }
+  ```
 
 
+---
 
+## 3. Session
 
-
-
-
+- Express sessions 라는 collection이 생기고 그 안에 document로 관리가 가능
 
 
 
