@@ -1,10 +1,10 @@
-const auth = (state, action) => {
+const auth = (state=null, action) => {
   console.log(state);
   switch (action.type) {
     case "TYPE":
-      return state;
+      return action.payload;
     default:
-      return action;
+      return state;
   }
 };
 
