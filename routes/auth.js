@@ -10,7 +10,10 @@ router.get(
 // req + code => google => Real user data get!
 router.get(
   '/callback',
-  passport.authenticate('google')
+  passport.authenticate('google'),
+  (req, res) => {
+    res.redirect('/dashboard');
+  }
 );
 
 module.exports = router;
