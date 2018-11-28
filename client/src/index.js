@@ -5,6 +5,7 @@ import 'materialize-css/dist/css/materialize.min.css';
 
 import { createStore, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
+import reduxThunk from 'redux-thunk'; // redux에서 비동기 처리를 가능케 함
 
 import App from "./components/App";
 import reducers from "./reducers";
@@ -12,7 +13,7 @@ import reducers from "./reducers";
 const store = createStore(
     reducers,
     {},
-    applyMiddleware()
+    applyMiddleware(reduxThunk)
 );
 
 ReactDom.render(

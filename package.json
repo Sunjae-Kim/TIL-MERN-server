@@ -14,6 +14,7 @@
   "author": "sunjae-kim",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.18.0",
     "config": "^3.0.0",
     "cookie-session": "^2.0.0-beta.3",
     "express": "^4.16.4",
@@ -21,6 +22,7 @@
     "mongod": "^2.0.0",
     "mongoose": "^5.3.13",
     "passport": "^0.4.0",
-    "passport-google-oauth20": "^1.0.0"
+    "passport-google-oauth20": "^1.0.0",
+    "redux-thunk": "^2.3.0"
   }
 }
