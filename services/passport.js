@@ -32,18 +32,12 @@ passport.use(new GoogleStrategy(
   /*
     refreshToken: 언제 expire 시킬지  
   */
-  (accessToken, refreshToken, profile, done) => {
-    let user = User.findOne({ googleID: profile.id})
-      .then(existingUser => {
-        if(existingUser) { 
-          done(null, existingUser);
-        } else { // New User
-          user = new User({ googleID: profile.id});
-          user.save()
-            .then(newUser => done(null, newUser))
-            .catch(error => console.error(error.message));
-        }
-      })
-      .catch(error => console.error(error.message));
+  async (accessToken, refreshToken, profile, done) => {
+    const existingUser = await User.findOne({ googleID: profile.id });
+    if(existingUser) done(null, existingUser);
+    else { 
+      const newUser = await new User({ googleID: profile.id }).save();
+      done(null, newUser);
+    }
   }
 ));
